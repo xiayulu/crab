@@ -1,0 +1,11 @@
+/* begin stiky-footer 页脚沉底
+* https://css-tricks.com/couple-takes-sticky-footer/ 
+*/
+.stiky-footer {
+    min-height: calc(100vh - 80px);
+}
+
+.stiky-footer-height {
+    height: 60px;
+}
+/* end stiky-footer */
