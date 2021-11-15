@@ -11,3 +11,5 @@ async-std = { version = "1.8.0", features = ["attributes"] }
 serde = { version = "1.0", features = ["derive"] }
 tera = "1.6.1"
 tide-tera = "0.2.4"
+sea-orm = { version = "0.3.2", features = [ "sqlx-postgres", "runtime-async-std-native-tls", "macros" ], default-features = false }
+dotenv = "0.15.0"
