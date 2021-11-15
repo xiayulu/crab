@@ -13,14 +13,23 @@ pub struct Model {
     pub reputation: Option<i32>,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter)]
-pub enum Relation {}
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
+pub enum Relation {
+    #[sea_orm(has_many = "super::blog::Entity")]
+    Blog,
+    #[sea_orm(has_one = "super::auths::Entity")]
+    Auths,
+}
 
-impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef {
-        match self {
-            _ => panic!("No RelationDef"),
-        }
+impl Related<super::blog::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Blog.def()
+    }
+}
+
+impl Related<super::auths::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Auths.def()
     }
 }
 
