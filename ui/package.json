@@ -1,0 +1,21 @@
+{
+	"name": "realworld.svelte.dev",
+	"version": "1.0.1-next.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "svelte-kit dev",
+		"build": "svelte-kit build --verbose",
+		"preview": "svelte-kit preview"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-netlify": "next",
+		"@sveltejs/adapter-vercel": "next",
+		"@sveltejs/kit": "next",
+		"marked": "^2.0.1",
+		"svelte": "^3.42.1"
+	},
+	"dependencies": {
+		"cookie": "^0.4.1"
+	}
+}

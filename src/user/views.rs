@@ -1,30 +1,63 @@
-use crate::entity::prelude::*;
-use crate::entity::users;
-use sea_orm::{prelude::*, ActiveValue, Database, Set, Unset};
+use crate::user::models::{Account, Profile};
+use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
+use actix_web::{
+    error, get, middleware, web, App, Error, HttpResponse, HttpServer, Responder, Result,
+};
+use sqlx::postgres::PgPool;
 use std::env;
-use tera::Tera;
-use tide::prelude::*;
-use tide::{Request, Response};
-use tide_tera::prelude::*;
 
-pub async fn create_user_view(req: Request<Tera>) -> tide::Result {
-    let tera = req.state();
-    let title = "你好";
-    // Set value
-    let _: ActiveValue<i32> = Set(10);
+#[get("/users")]
+async fn find_all() -> impl Responder {
+    todo!()
+}
 
+#[get("/users/{id}")]
+async fn find() -> impl Responder {
+    todo!()
+    
+}
+
+#[post("/users")]
+async fn create(user: web::Json<User>) -> impl Responder {
+    HttpResponse::Created().json(user.into_inner())
+}
+
+#[put("/users/{id}")]
+async fn update(user: web::Json<User>) -> impl Responder {
+    HttpResponse::Ok().json(user.into_inner())
+}
+
+#[delete("/users/{id}")]
+async fn delete() -> impl Responder {
+    HttpResponse::Ok().json(json!({"message": "Deleted"}))
+}
+
+pub fn init_routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(find_all);
+    cfg.service(find);
+    cfg.service(create);
+    cfg.service(update);
+    cfg.service(delete);
+}
+
+pub async fn create_user_view(form: web::Json<Profile>) -> Result<String> {
+    Ok(format!("Welcome {:?}!", form.nickname))
+}
+
+pub async fn list_user_view() -> Result<HttpResponse, Error> {
     dotenv::dotenv().ok();
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set in .env file");
-    let conn = Database::connect(db_url)
+    let db = PgPool::connect(&db_url)
         .await
-        .expect("Database connection failed");
-    // Unset value
-    let _: ActiveValue<i32> = Unset(None);
-    let user = users::ActiveModel {
-        nickname: Set("sea-orm".to_owned()),
-        ..Default::default()
-    };
+        .expect("Error when connect db");
 
-    let res: users::ActiveModel = user.insert(&conn).await?;
-    tera.render_response("home.html", &context! { "title" => title })
+    let recs = sqlx::query!(r#"SELECT * FROM users ORDER BY user_id"#)
+        .fetch_all(&db)
+        .await
+        .expect("Error when get all");
+
+    println!("{:?}", recs);
+    Ok(HttpResponse::Ok()
+        .content_type("text/plain")
+        .body(format!("list user{:?}", recs)))
 }
